@@ -16,6 +16,17 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.boot:'
+
+	// https://mvnrepository.com/artifact/org.springframework.security/spring-security-oauth2-resource-server
+	compile group: 'org.springframework.security', name: 'spring-security-oauth2-resource-server', version: '5.4.2'
+	// https://mvnrepository.com/artifact/org.springframework.security/spring-security-oauth2-jose
+	compile group: 'org.springframework.security', name: 'spring-security-oauth2-jose', version: '5.4.2'
+
+
+	annotationProcessor 'org.projectlombok:lombok'
+	compileOnly 'org.projectlombok:lombok'
+	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
 }
