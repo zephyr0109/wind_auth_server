@@ -33,5 +33,20 @@ public class PersonService {
 		log.info(result.toString());
 		return result;
 	}
+	
+	/**
+	 * 덮어 쓰는 용도의 업데이트 메소드
+	 * @param id 문서 id
+	 * @param newPerson 변경할 객체
+	 * @return 변경한 객체
+	 */
+	public Person updatePerson(String id, Person newPerson) {
+		
+		Person p = mongoOps.findById(id, Person.class);
+		if(p != null) {
+			return mongoOps.save(newPerson);
+		}
+		return null;
+	}
 
 }
