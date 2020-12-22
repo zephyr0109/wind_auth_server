@@ -22,7 +22,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
 
         http.authorizeRequests(authorize -> authorize.antMatchers("/api").authenticated())
-//                .oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt).httpBasic(withDefaults())
+                .oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt).httpBasic(withDefaults())
                
                 .formLogin().disable();
     }
