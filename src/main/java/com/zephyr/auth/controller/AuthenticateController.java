@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -16,21 +17,22 @@ import com.zephyr.auth.model.PersonService;
 
 import lombok.extern.slf4j.Slf4j;
 
-@RestController("/auth")
 @Slf4j
-public class AuthorizeController {
+@RestController
+@RequestMapping("/api/authenticate")
+public class AuthenticateController {
 
 	private PersonService personService;
 	
 	@Autowired
-	public AuthorizeController(PersonService personService) {
+	public AuthenticateController(PersonService personService) {
 		this.personService = personService;
 	}
 	
 	
-	@GetMapping("")
-	public String test() {
-		return "test page";
+	@GetMapping("test")
+	public ResponseEntity<String> test() {
+		return new ResponseEntity<String>(HttpStatus.OK);
 	}
 	
 	@PostMapping("/signin")
