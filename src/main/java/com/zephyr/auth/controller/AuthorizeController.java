@@ -28,7 +28,7 @@ public class AuthorizeController {
 	}
 	
 	
-	@GetMapping("")
+	@GetMapping("/test")
 	public String test() {
 		return "test page";
 	}
