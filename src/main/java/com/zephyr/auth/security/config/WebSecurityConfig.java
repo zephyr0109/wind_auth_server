@@ -1,4 +1,4 @@
-package com.zephyr.auth.config;
+package com.zephyr.auth.security.config;
 
 import static org.springframework.security.config.Customizer.withDefaults;
 
@@ -8,9 +8,12 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.config.annotation.web.configurers.oauth2.server.resource.OAuth2ResourceServerConfigurer;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
-import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;;
+import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
+import org.springframework.security.provisioning.InMemoryUserDetailsManager;;
 
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
@@ -21,10 +24,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
 
-        http.authorizeRequests(authorize -> authorize.antMatchers("/api").authenticated())
-                .oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt).httpBasic(withDefaults())
-               
-                .formLogin().disable();
+        http.authorizeRequests(authorize -> authorize.mvcMatchers("/api/authenticate/**").permitAll()).
+        httpBasic(withDefaults());
     }
     
     @Override
@@ -37,4 +38,5 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     public JwtDecoder jwtDecoder() {
         return NimbusJwtDecoder.withJwkSetUri(this.jwkSetUri).build();
     }
+    
 }
