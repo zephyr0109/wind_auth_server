@@ -1,0 +1,24 @@
+[
+	{
+		"_id": "tuser2",
+		"email": "star8076@hanmail.net",
+		"name": "zep2",
+		"password": "test2",
+		"group": {
+			"groupId": "tid1",
+			"name": "test group"
+		},
+		"_class": "com.zephyr.auth.model.Person"
+	},
+		{
+		"_id": "tuser1",
+		"email": "star8076@hanmail.net",
+		"name": "zep",
+		"password": "test2",
+		"group": {
+			"groupId": "tid1",
+			"name": "test group"
+		},
+		"_class": "com.zephyr.auth.model.Person"
+	}
+]

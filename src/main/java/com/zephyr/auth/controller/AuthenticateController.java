@@ -33,7 +33,7 @@ public class AuthenticateController {
 
 	@GetMapping("/test")
 	public ResponseEntity<String> test() {
-		return new ResponseEntity<String>(HttpStatus.OK);
+		return new ResponseEntity<String>("test ok", HttpStatus.OK);
 	}
 	
 	@PostMapping("/signin")

@@ -33,6 +33,6 @@ public class Person {
 	
 	private String password;
 	
-	
+	private Group group;
 	
 }
