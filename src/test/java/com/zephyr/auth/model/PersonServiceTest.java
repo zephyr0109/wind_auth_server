@@ -1,39 +1,37 @@
 package com.zephyr.auth.model;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertNotNull;
 
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import lombok.extern.slf4j.Slf4j;
 
-@SpringBootTest
 @Slf4j
-@ContextConfiguration(classes = MongoConfigForTest.class)
+@SpringBootTest(classes = { PersonService.class })
+@ContextConfiguration(classes = { MongoConfigForTest.class })
+@ExtendWith(SpringExtension.class)
 class PersonServiceTest {
 
+	@Autowired
 	PersonService personService;
 
 	@Autowired
 	MongoTemplate mongoOps;
 
-	@BeforeEach
-	void before() {
-		personService = new PersonService(mongoOps);
-		System.out.println(mongoOps);
-	}
+	@Autowired
+	PersonRepository personRepository;
 
 	@Test
 	void test() {
 		// fail("Not yet implemented");
 		log.info("init test");
-		assertNotNull(personService);
+		assertThat(personService).isNotNull();
 	}
 
 	@Test
@@ -55,11 +53,9 @@ class PersonServiceTest {
 	void changePassword() {
 		String newPwd = "test2";
 		final String oldPwd = "test1";
-		Person oldP = personService.changePassword("tuser", oldPwd, newPwd);
-		log.info(oldP.toString());
-		assertThat(oldP.getPassword()).isEqualTo(oldPwd);
-		Person newP = personService.findById("tuser");
-		assertThat(newP.getPassword()).isEqualTo(newPwd);
+		Person newPerson = personService.changePassword("tuser", oldPwd, newPwd);
+		log.debug("old person : " + newPerson.toString());
+		assertThat(newPerson.getPassword()).isEqualTo(newPwd);		
 	}
 
 	@Test
@@ -82,12 +78,13 @@ class PersonServiceTest {
 
 	@Test
 	void modifyPerson() {
-//		실패남
 		Person changePerson = personService.findById("tuser");
+
 		changePerson.setEmail("change@hanmail.net");
 		Person newPerson = personService.modifyPerson("tuser", changePerson);
 		assertThat(changePerson.getEmail()).isEqualTo(newPerson.getEmail());
 		assertThat(changePerson.getId()).isEqualTo(newPerson.getId());
+
 	}
 
 }
