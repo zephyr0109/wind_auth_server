@@ -22,30 +22,38 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/api/authenticate")
 public class AuthenticateController {
 
-	private PersonService personService;
-	
-	@Autowired
-	public AuthenticateController(PersonService personService) {
-		this.personService = personService;
-	}
-	
-	
+    private PersonService personService;
 
-	@GetMapping("/test")
-	public ResponseEntity<String> test() {
-		return new ResponseEntity<String>("test ok", HttpStatus.OK);
-	}
-	
-	@PostMapping("/signin")
-	public ResponseEntity<Person> signin(@RequestBody Map<String, Object> params){
-		return null;
-	}
-	
-	
-	@GetMapping("/signout")
-	public ResponseEntity<String> signout(@RequestParam("token") String token){
-		log.info("signout call");
-		return new ResponseEntity<String>("success", HttpStatus.OK);
-	}
-	
+    @Autowired
+    public AuthenticateController(PersonService personService) {
+        this.personService = personService;
+    }
+
+    @GetMapping("/test")
+    public ResponseEntity<String> test() {
+        return new ResponseEntity<String>("test ok", HttpStatus.OK);
+    }
+
+    @PostMapping("/signin")
+    public ResponseEntity<Person> signin(@RequestBody Map<String, Object> params) {
+        log.info("test");
+        log.info((String) params.get("id"));
+        return null;
+    }
+
+    @GetMapping("/signout")
+    public ResponseEntity<String> signout(@RequestParam("token") String token) {
+        log.info("signout call");
+        return new ResponseEntity<String>("success", HttpStatus.OK);
+    }
+
+    @PostMapping("/register")
+    public ResponseEntity<Person> register(@RequestBody Person p) {
+        // Person p = new Person();
+        // p.setId((String) params.get("id"));
+        // p.setPassword((String) params.get("password"));
+        System.out.println(p);
+        return new ResponseEntity<>(personService.insertPerson(p), HttpStatus.CREATED);
+    }
+
 }
