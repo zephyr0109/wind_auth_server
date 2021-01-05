@@ -35,10 +35,9 @@ public class AuthenticateController {
     }
 
     @PostMapping("/signin")
-    public ResponseEntity<Person> signin(@RequestBody Map<String, Object> params) {
-        log.info("test");
-        log.info((String) params.get("id"));
-        return null;
+    public ResponseEntity<Person> signin(@RequestBody Person p) {    	
+        Person result = personService.findByIdAndPassword(p);
+        return new ResponseEntity<Person>(result, HttpStatus.OK);
     }
 
     @GetMapping("/signout")
@@ -48,11 +47,7 @@ public class AuthenticateController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<Person> register(@RequestBody Person p) {
-        // Person p = new Person();
-        // p.setId((String) params.get("id"));
-        // p.setPassword((String) params.get("password"));
-        System.out.println(p);
+    public ResponseEntity<Person> register(@RequestBody Person p) {        
         return new ResponseEntity<>(personService.insertPerson(p), HttpStatus.CREATED);
     }
 

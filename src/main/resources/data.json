@@ -10,7 +10,7 @@
 		},
 		"_class": "com.zephyr.auth.model.Person"
 	},
-		{
+	{
 		"_id": "tuser1",
 		"email": "star8076@hanmail.net",
 		"name": "zep",

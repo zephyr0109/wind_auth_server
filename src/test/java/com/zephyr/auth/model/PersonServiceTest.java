@@ -1,12 +1,15 @@
 package com.zephyr.auth.model;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
@@ -14,7 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @SpringBootTest(classes = { PersonService.class })
-@ContextConfiguration(classes = { MongoConfigForTest.class })
+@ContextConfiguration(classes = { MongoConfigForTest.class ,WebSecurityConfigForTest.class})
 @ExtendWith(SpringExtension.class)
 class PersonServiceTest {
 
@@ -26,6 +29,10 @@ class PersonServiceTest {
 
 	@Autowired
 	PersonRepository personRepository;
+	
+	@Autowired
+	PasswordEncoder encoder;
+	
 
 	@Test
 	void test() {
@@ -48,26 +55,36 @@ class PersonServiceTest {
 		log.info(result.toString());
 
 	}
-
-	@Test
-	void changePassword() {
-		String newPwd = "test2";
-		final String oldPwd = "test1";
-		Person newPerson = personService.changePassword("tuser", oldPwd, newPwd);
-		log.debug("old person : " + newPerson.toString());
-		assertThat(newPerson.getPassword()).isEqualTo(newPwd);		
-	}
-
+	
 	@Test
 	void signIn() {
 		Person p = Person.builder().id("tuser").password("test1").build();
 		Person result = personService.findByIdAndPassword(p);
 		assertThat(result).isNotNull();
-		assertThat(result.getId()).isEqualTo(p.getId());
-		p.setPassword("wrongPwd");
-		result = personService.findByIdAndPassword(p);
-		assertThat(result).isNull();
+		assertThat(result.getId()).isEqualTo(p.getId());		
 	}
+	
+	@Test
+	void signInWithWrongPwd() {
+		Person p = Person.builder().id("tuser").password("wrongPwd").build();		
+		Assertions.assertThrows(RuntimeException.class, () -> {
+			personService.findByIdAndPassword(p);
+		});
+		
+	}
+	
+	
+
+	@Test
+	void changePassword() {
+		final String oldPwd = "test1";
+		final String newPwd = "test2";		
+		Person newPerson = personService.changePassword("tuser", oldPwd, newPwd);
+		log.debug("old person : " + newPerson.toString());
+		assertThat(encoder.matches(newPwd, newPerson.getPassword())).isTrue();		
+	}
+
+
 
 	@Test
 	void signOut() {

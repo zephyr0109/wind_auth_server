@@ -8,6 +8,8 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import lombok.extern.slf4j.Slf4j;
@@ -17,14 +19,13 @@ import lombok.extern.slf4j.Slf4j;
 public class PersonService {
 
 	private PersonRepository personRepository;
-	// private MongoTemplate mongoOps;
+	
+	private PasswordEncoder encoder;
 
-//	public PersonService(MongoTemplate mongoOps) {
-//		this.mongoOps = mongoOps;
-//	}
-
-	public PersonService(PersonRepository personRepository) {
-		this.personRepository = personRepository;
+	public PersonService(PersonRepository personRepository, PasswordEncoder encoder) {
+		this.personRepository = personRepository;		
+		this.encoder = encoder;
+		
 	}
 
 	/**
@@ -34,6 +35,9 @@ public class PersonService {
 	 */
 	public Person insertPerson(Person p) {
 		p.setRegisterDate(LocalTime.now());
+		p.setPassword(encoder.encode(p.getPassword()));
+		
+		
 		Person result = personRepository.insert(p);
 		log.debug("get person info, id : " + result.getId());
 		return result;
@@ -62,30 +66,31 @@ public class PersonService {
 	 * @param newPwd 변경할 비밀번호
 	 * @return
 	 */
-	public Person changePassword(String id, String oldPwd, String newPwd) {
-		Person p = personRepository.findByIdAndPassword(id, oldPwd).orElse(null);
-		if(p != null) {
-			p.setPassword(newPwd);
+	public Person changePassword(String id, String oldPwd, String newPwd) {				
+		Person p = personRepository.findById(id).orElseThrow();
+		if(encoder.matches(oldPwd, p.getPassword())) {
+			p.setPassword(encoder.encode(newPwd));
 			return personRepository.save(p);
 		}
-		
-		//		final String key = "password";
-		//		final String key2 = "id";		
-		//		Query criteria = new Query(Criteria.where(key2).is(id).and(key).is(oldPwd));
-		//		Update update = new Update().set(key, newPwd);
-		//Person p = mongoOps.update(Person.class).matching(criteria).apply(update).findAndModifyValue();
 
 		return p;
 	}
 
 	public Person findById(String id) {
-		// TODO Auto-generated method stub
 		return personRepository.findById(id).orElse(null);
 	}
 
 	public Person findByIdAndPassword(Person p) {
-
-		return personRepository.findByIdAndPassword(p.getId(), p.getPassword()).orElse(null);
+		Person foundPerson = personRepository.findById(p.getId()).orElseThrow();
+		log.info(foundPerson.toString());		
+		if(encoder.matches(p.getPassword(), foundPerson.getPassword())) {
+			return foundPerson;
+		} else {
+			// TODO : 전용 excpetion 생성할 것			
+			throw new RuntimeException("not found excpetion");
+		}
+		
+		
 	}
 
 	/**
