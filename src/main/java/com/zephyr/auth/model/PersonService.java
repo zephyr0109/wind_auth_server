@@ -1,14 +1,7 @@
 package com.zephyr.auth.model;
 
-import static org.springframework.data.mongodb.core.query.Criteria.where;
-
 import java.time.LocalTime;
 
-import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.data.mongodb.core.query.Update;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -24,8 +17,7 @@ public class PersonService {
 
 	public PersonService(PersonRepository personRepository, PasswordEncoder encoder) {
 		this.personRepository = personRepository;		
-		this.encoder = encoder;
-		
+		this.encoder = encoder;		
 	}
 
 	/**
@@ -91,19 +83,6 @@ public class PersonService {
 		}
 		
 		
-	}
-
-	/**
-	 * 로그아웃 함수
-	 * 
-	 * @param string 로그아웃 id
-	 * @return 성공적으로 로그아웃 했을 경우 true
-	 */
-	public boolean signOut(String string) {
-		// TODO: 1. 로그인 히스토리 db 생성 시 내용 기록
-
-		// TODO: 2. spring security 적용 후 인증토큰 생성 시 해당 토큰 파기
-		return true;
 	}
 
 	public Person modifyPerson(String id, Person changePerson) {

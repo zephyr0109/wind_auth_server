@@ -57,7 +57,7 @@ class PersonServiceTest {
 	}
 	
 	@Test
-	void signIn() {
+	void findByIdAndPassword() {
 		Person p = Person.builder().id("tuser").password("test1").build();
 		Person result = personService.findByIdAndPassword(p);
 		assertThat(result).isNotNull();
@@ -84,14 +84,6 @@ class PersonServiceTest {
 		assertThat(encoder.matches(newPwd, newPerson.getPassword())).isTrue();		
 	}
 
-
-
-	@Test
-	void signOut() {
-
-		boolean flag = personService.signOut("test1");
-		assertThat(flag).isTrue();
-	}
 
 	@Test
 	void modifyPerson() {
