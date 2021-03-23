@@ -1,19 +1,19 @@
 package com.zephyr.auth.security.config;
 
-import static org.springframework.security.config.Customizer.withDefaults;
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import com.nimbusds.jose.crypto.PasswordBasedDecrypter;;
 
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
@@ -24,14 +24,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
 
-        http.authorizeRequests(authorize -> authorize.mvcMatchers("/api/authenticate/**").permitAll()).
-        httpBasic(withDefaults());
-    }
-    
-    @Override
-    public void configure(WebSecurity web) throws Exception {
-    	// TODO Auto-generated method stub
-    	web.ignoring().antMatchers("/auth/signout");
+        http.authorizeRequests(authorize -> authorize.mvcMatchers("/api/authenticate/**").permitAll())
+                // .httpBasic(withDefaults())
+                .cors().configurationSource(configurationSource()).and().csrf().disable();
     }
 
     @Bean
@@ -39,4 +34,21 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         return NimbusJwtDecoder.withJwkSetUri(this.jwkSetUri).build();
     }
     
+    @Bean
+    public CorsConfigurationSource configurationSource() {
+        CorsConfiguration conf = new CorsConfiguration();
+        conf.addAllowedOriginPattern("*");
+        conf.addAllowedHeader("*");
+        conf.addAllowedMethod("*");
+        conf.setAllowCredentials(true);
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", conf);
+        return source;
+    }
+    
+    @Bean
+    public PasswordEncoder passwordEncoder() {    	
+    	return new BCryptPasswordEncoder(16);
+    }
+
 }

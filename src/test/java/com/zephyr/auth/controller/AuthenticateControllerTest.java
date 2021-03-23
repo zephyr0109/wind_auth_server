@@ -14,8 +14,8 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import com.zephyr.auth.model.PersonService;
 
-@WebMvcTest(controllers = AuthorizeController.class)
-class AuthorizeControllerTest {
+@WebMvcTest(controllers = AuthenticateController.class)
+class AuthenticateControllerTest {
 
 	@Autowired
 	private MockMvc mockMvc;
@@ -26,7 +26,7 @@ class AuthorizeControllerTest {
 	
 	@Test
 	void test() throws Exception {
-		this.mockMvc.perform(get("/test")).andDo(print())
+		this.mockMvc.perform(get("/api/authenticate/test")).andDo(print())
 		.andExpect(status().isOk())
 		.andExpect( content().string(containsString("test")));
 	}

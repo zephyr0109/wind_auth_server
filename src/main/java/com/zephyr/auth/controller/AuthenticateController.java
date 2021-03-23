@@ -1,10 +1,12 @@
 package com.zephyr.auth.controller;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -12,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.zephyr.auth.model.AuthenticateService;
 import com.zephyr.auth.model.Person;
 import com.zephyr.auth.model.PersonService;
 
@@ -22,30 +25,40 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/api/authenticate")
 public class AuthenticateController {
 
-	private PersonService personService;
-	
-	@Autowired
-	public AuthenticateController(PersonService personService) {
-		this.personService = personService;
-	}
-	
-	
+    private PersonService personService;
+    
+    private AuthenticateService authenticateService;
 
-	@GetMapping("/test")
-	public ResponseEntity<String> test() {
-		return new ResponseEntity<String>(HttpStatus.OK);
-	}
-	
-	@PostMapping("/signin")
-	public ResponseEntity<Person> signin(@RequestBody Map<String, Object> params){
-		return null;
-	}
-	
-	
-	@GetMapping("/signout")
-	public ResponseEntity<String> signout(@RequestParam("token") String token){
-		log.info("signout call");
-		return new ResponseEntity<String>("success", HttpStatus.OK);
-	}
-	
+    @Autowired
+    public AuthenticateController(PersonService personService, AuthenticateService authenticateService) {
+        this.personService = personService;
+        this.authenticateService = authenticateService;
+    }
+
+    @GetMapping("/test")
+    public ResponseEntity<String> test() {
+        return new ResponseEntity<String>("test ok", HttpStatus.OK);
+    }
+
+    @PostMapping("/signin")
+    public ResponseEntity<Map<String,Object>> signin(@RequestBody Person p) {   	
+        Person result = personService.findByIdAndPassword(p);
+        String token = authenticateService.signIn(result);
+        Map<String, Object> map = new HashMap<>();
+        map.put("user", result);
+        map.put("token", token);
+        return new ResponseEntity<>(map, HttpStatus.OK);
+    }
+
+    @GetMapping("/signout")
+    public ResponseEntity<String> signout(@RequestParam("token") String token) {
+        log.info("signout call");
+        return new ResponseEntity<String>("success", HttpStatus.OK);
+    }
+
+    @PostMapping("/register")
+    public ResponseEntity<Person> register(@RequestBody Person p) {        
+        return new ResponseEntity<>(personService.insertPerson(p), HttpStatus.CREATED);
+    }
+
 }
