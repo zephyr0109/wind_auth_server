@@ -16,7 +16,7 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
-	implementation 'org.springframework.boot:'
+	
 
 	// https://mvnrepository.com/artifact/org.springframework.security/spring-security-oauth2-resource-server
 	compile group: 'org.springframework.security', name: 'spring-security-oauth2-resource-server', version: '5.4.2'
